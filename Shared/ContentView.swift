@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/*
 struct ContentView: View {
     //@Binding var selection: Node?
     
@@ -30,3 +31,4 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+*/

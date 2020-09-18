@@ -8,27 +8,27 @@
 import SwiftUI
 
 struct RootView: View {
-    var tree: Node
-    @Binding var root: Node
+    //var tree: Node
+    //@Binding var root: Node
     
     @State var avgPosition: CGFloat? = nil
     
     //@Binding var horizontalPadding: CGFloat
     
-    
+    @ObservedObject var store: ObservedVariables
     
     var body: some View {
-        TreeView(tree: tree, root: $root)
-        
+        TreeView(id: store.root!).environmentObject(store)
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+            .onTapGesture(count: 1, perform: {
+                withAnimation{
+                    store.selected = nil
+                }
+            })
     }
 }
 
-class ObservedVariables: ObservableObject {
-    @Published var selected: UUID?
-    @Published var horizontalPadding: CGFloat = 5
-    
-    @Published var nodes: [UUID:Node] = [:]
-}
 
 struct RootView_Previews: PreviewProvider {
     static var previews: some View {

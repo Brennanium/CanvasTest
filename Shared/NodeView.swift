@@ -7,64 +7,109 @@
 
 import SwiftUI
 
-struct NodeWrapperView: View {
-    var node: Node
-    @Binding var root: Node
-    
-    //@EnvironmentObject var store: ObservedVariables
-    
-    var body: some View {
-        NodeView(node: node, root: $root)
-            .anchorPreference(key: NodePositionsPreferenceKey.self, value: .top, transform: { anchor in
-                [self.node.id: NodePositionData(top: anchor)]
-            })
-            .transformAnchorPreference(key: NodePositionsPreferenceKey.self, value: .bottom, transform: { value, anchor  in
-                value[self.node.id]!.bottom = anchor
-            })
-            .transformAnchorPreference(key: NodePositionsPreferenceKey.self, value: .leading, transform: { value, anchor  in
-                value[self.node.id]!.leading = anchor
-            })
-            
-            
-    }
-}
-
-
 struct NodeView: View {
-    var node: Node
-    @Binding var root: Node
+    var id: UUID
     
     @EnvironmentObject var store: ObservedVariables
     
     var body: some View {
-        if (store.selected ?? UUID()) == node.id {
-            NavigationLink(destination: NodeDetailView(node: node)) {
-                Text(node.text)
+        let tap = TapGesture()
+            .onEnded() { _ in
+                //withAnimation(.default) {
+                    //self.root.insert("new!", forID: self.node.id)
+                    if self.store.selected != self.id {
+                        self.store.selected = self.id
+                    } //else {
+                        //self.store.selected = nil
+                    //}
+                //}
+            }
+        let doubleTap = TapGesture(count: 2)
+            .onEnded() { _ in
+                withAnimation(.default) {
+                    self.store.selected = self.store.insert(Node(text: "new!"), forID: id)
+                }
+            }
+        let simultaneous = tap.simultaneously(with: doubleTap)
+        
+        return innerNode
+            .gesture(simultaneous)
+            .anchorPreference(key: NodePositionsPreferenceKey.self, value: .top, transform: { anchor in
+                [id: NodePositionData(top: anchor)]
+            })
+            .transformAnchorPreference(key: NodePositionsPreferenceKey.self, value: .bottom, transform: { value, anchor  in
+                value[id]!.bottom = anchor
+            })
+            .transformAnchorPreference(key: NodePositionsPreferenceKey.self, value: .leading, transform: { value, anchor  in
+                value[id]!.leading = anchor
+            })
+            
+            
+    }
+    
+    
+    var innerNode: some View {
+        if store.selected == id {
+            return AnyView(//NavigationLink(destination: NodeDetailView(id: id).environmentObject(store)) {
+                Text(store[id].text)
+            //TextField("XP", text: $store[id].text)
                     .font(.system(size: 16))
                     .fixedSize()
                     .padding(2)
                     .background(RoundedRectangle(cornerRadius: 4).stroke().foregroundColor(.blue))
-            }
+                    .contextMenu() {
+                        Button(action: {
+                            store.delete(id: id)
+                        }) {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
+            )
         } else {
-            Text(node.text)
-                .font(.system(size: 16))
-                .fixedSize()
-                .padding(2)
-                .onTapGesture(count: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/, perform: {
+            /*let tap = TapGesture()
+                .onEnded() { _ in
                     withAnimation {
                         //self.root.insert("new!", forID: self.node.id)
-                        if self.store.selected != self.node.id {
-                            self.store.selected = self.node.id
+                        if self.store.selected != self.id {
+                            self.store.selected = self.id
                         } else {
                             self.store.selected = UUID()
                         }
                     }
-                })
+                }
+            let doubleTap = TapGesture(count: 2)
+                .onEnded() { _ in
+                    _ = self.store.insert(Node(text: "new!"), forID: id)
+                }
+            let simultaneous = tap.simultaneously(with: doubleTap)
+        
+            */
+            return AnyView(Text(store[id].text)
+                .font(.system(size: 16))
+                .fixedSize()
+                .padding(2)
+                //.gesture(simultaneous)
+                /*.onTapGesture(count: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/, perform: {
+                    withAnimation {
+                        //self.root.insert("new!", forID: self.node.id)
+                        if self.store.selected != self.id {
+                            self.store.selected = self.id
+                        } else {
+                            self.store.selected = UUID()
+                        }
+                    }
+                })*/)
         }
+
     }
 }
 
-struct Node: Hashable, Identifiable {
+
+class Node: /*Hashable,*/ Identifiable {
+    static func == (lhs: Node, rhs: Node) -> Bool {
+        lhs.id == rhs.id
+    }
+    
     var id = UUID()
     
     var text: String
@@ -73,30 +118,10 @@ struct Node: Hashable, Identifiable {
     
     var shape: String?
     
-    mutating func insert(_ text: String) {
-        /*if children == nil {
-            children = [Node(text: text)]
-        } else if children!.count > 1 {
-            children![1].insert(text)
-        }*/
-        children!.append(Node(text: text))
+    init(text: String) {
+        self.text = text
     }
     
-    mutating func insert(_ text: String, forID id: UUID) {
-        if children != nil {
-            for i in 0..<children!.count {
-                if children![i].id == id {
-                    if children![i].children != nil {
-                        children![i].children!.append(Node(text: text))
-                    } else {
-                        children![i].children = [Node(text: text)]
-                    }
-                } else {
-                    children![i].insert(text, forID: id)
-                }
-            }
-        }
-    }
 }
 
 
@@ -116,8 +141,19 @@ struct NodePositionsPreferenceKey: PreferenceKey {
 }
 
 
+
 struct NodeView_Previews: PreviewProvider {
     static var previews: some View {
         Text("Hello World")//NodeView()
     }
 }
+
+
+
+
+
+
+
+
+
+

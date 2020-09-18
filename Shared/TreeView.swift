@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct TreeView: View {
-    var tree: Node
-    @Binding var root: Node
+    var id: UUID
+    
+    //@Binding var root: Node
     
     @State var avgPosition: CGFloat? = nil
     
@@ -18,24 +19,23 @@ struct TreeView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            NodeWrapperView(node: tree, root: $root)
+            
+            NodeView(id: id)
+            
                 .alignmentGuide(HorizontalAlignment.leading, computeValue: { dimension in
                     -(avgPosition ?? dimension.width/2.0) + dimension.width/2.0
                 })
-                /*
-                //.read(rightColumnWidth)
-                //.frame(width: width)*/
-                
                 .padding(.vertical, 7/2)
                 .padding(.horizontal, store.horizontalPadding/2)
                 
+            
             //Text("\(avgPosition ?? 0)").font(.system(size: 8))
-            if(tree.children != nil){
+            if(store[id].children != nil){
                 HStack(alignment: .top, spacing: 10) {
-                    ForEach(tree.children!) { child in
-                        TreeView(tree: child, root: $root)
-                            //.read(rightColumnWidth)
-                            //.frame(width: width)
+                    ForEach(store[id].children!) { node in
+                        //DraggableView() {
+                            TreeView(id: node.id)
+                        //}
                     }
                 }
             }
@@ -43,16 +43,16 @@ struct TreeView: View {
         .backgroundPreferenceValue(NodePositionsPreferenceKey.self) { preference -> GeometryReader<AnyView> in
             GeometryReader { geometry -> AnyView in
                 
-                if(self.tree.children != nil){
+                if(store[id].children != nil){
                     
                     DispatchQueue.main.async {
                         var sum: CGFloat = 0
                         
-                        self.tree.children!.forEach({ child in
+                        store[id].children!.forEach({ child in
                             sum += geometry[preference[child.id]!.top!].x
                         })
                         
-                        self.avgPosition = sum/CGFloat(self.tree.children!.count)
+                        self.avgPosition = sum/CGFloat(store[id].children!.count)
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -65,10 +65,10 @@ struct TreeView: View {
         }
         .backgroundPreferenceValue(NodePositionsPreferenceKey.self) { preference in
             GeometryReader { geometry in
-                if(self.tree.children != nil){
-                    ForEach(self.tree.children!, id: \.id, content: { child in
+                if(store[id].children != nil){
+                    ForEach(store[id].children!, id: \.id, content: { child in
                         Line(
-                            from: geometry[preference[self.tree.id]!.bottom!],
+                            from: geometry[preference[id]!.bottom!],
                             to: geometry[preference[child.id]!.top!]
                         ).stroke()
                     })

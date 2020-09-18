@@ -19,6 +19,8 @@
 		F336347324E269F50034CDD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F336344724E269F40034CDD3 /* Assets.xcassets */; };
 		F336348324E26C240034CDD3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = F336348224E26C240034CDD3 /* Model.swift */; };
 		F336348424E26C240034CDD3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = F336348224E26C240034CDD3 /* Model.swift */; };
+		F336AA7F25143329004303F2 /* DraggableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F336AA7E25143329004303F2 /* DraggableView.swift */; };
+		F336AA8025143329004303F2 /* DraggableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F336AA7E25143329004303F2 /* DraggableView.swift */; };
 		F3AD443724FF064B00272C31 /* TreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD443624FF064B00272C31 /* TreeView.swift */; };
 		F3AD443824FF064B00272C31 /* TreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD443624FF064B00272C31 /* TreeView.swift */; };
 		F3AD443A24FF066500272C31 /* NodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD443924FF066500272C31 /* NodeView.swift */; };
@@ -67,6 +69,7 @@
 		F336346B24E269F50034CDD3 /* Tests_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOS.swift; sourceTree = "<group>"; };
 		F336346D24E269F50034CDD3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F336348224E26C240034CDD3 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		F336AA7E25143329004303F2 /* DraggableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableView.swift; sourceTree = "<group>"; };
 		F3AD443624FF064B00272C31 /* TreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeView.swift; sourceTree = "<group>"; };
 		F3AD443924FF066500272C31 /* NodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeView.swift; sourceTree = "<group>"; };
 		F3AD443C24FF0B2600272C31 /* LineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineView.swift; sourceTree = "<group>"; };
@@ -130,6 +133,7 @@
 				F3AD443624FF064B00272C31 /* TreeView.swift */,
 				F3AD4442250AB2CB00272C31 /* RootView.swift */,
 				F3AD443C24FF0B2600272C31 /* LineView.swift */,
+				F336AA7E25143329004303F2 /* DraggableView.swift */,
 				F3AD443F24FF0CD900272C31 /* CGPoint.swift */,
 				F322BF6E24EA109900E13AAF /* AlignmentTest.swift */,
 				F336344724E269F40034CDD3 /* Assets.xcassets */,
@@ -340,6 +344,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F336AA7F25143329004303F2 /* DraggableView.swift in Sources */,
 				F3AD443724FF064B00272C31 /* TreeView.swift in Sources */,
 				F336348324E26C240034CDD3 /* Model.swift in Sources */,
 				F3AD443A24FF066500272C31 /* NodeView.swift in Sources */,
@@ -357,6 +362,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F336AA8025143329004303F2 /* DraggableView.swift in Sources */,
 				F3AD443824FF064B00272C31 /* TreeView.swift in Sources */,
 				F336348424E26C240034CDD3 /* Model.swift in Sources */,
 				F3AD443B24FF066500272C31 /* NodeView.swift in Sources */,
