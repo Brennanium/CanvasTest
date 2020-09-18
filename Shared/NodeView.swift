@@ -57,13 +57,13 @@ struct NodeView: View {
                     .fixedSize()
                     .padding(2)
                     .background(RoundedRectangle(cornerRadius: 4).stroke().foregroundColor(.blue))
-                    .contextMenu() {
+                    /*.contextMenu() {
                         Button(action: {
                             store.delete(id: id)
                         }) {
                             Label("Delete", systemImage: "trash")
                         }
-                    }
+                    }*/
             )
         } else {
             /*let tap = TapGesture()

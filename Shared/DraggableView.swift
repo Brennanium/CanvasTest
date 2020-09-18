@@ -43,7 +43,7 @@ struct DraggableView<Content>: View where Content: View {
             .offset(x: position.width + dragState.translation.width, y: position.height + dragState.translation.height)
             .animation(.easeInOut)
             .gesture(
-                LongPressGesture(minimumDuration: 1.0)
+                LongPressGesture(minimumDuration: 0.5)
                 .sequenced(before: DragGesture())
                 .updating($dragState, body: { (value, state, transaction) in
  
