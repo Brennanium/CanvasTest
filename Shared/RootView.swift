@@ -21,11 +21,11 @@ struct RootView: View {
         TreeView(id: store.root!).environmentObject(store)
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
-            .onTapGesture(count: 1, perform: {
+            /*.onTapGesture(count: 1, perform: {
                 withAnimation{
                     store.selected = nil
                 }
-            })
+            })*/
     }
 }
 

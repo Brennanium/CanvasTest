@@ -10,6 +10,10 @@ import SwiftUI
 struct TreeView: View {
     var id: UUID
     
+    var node: Node? {
+        get { store.nodeByID(id) }
+    }
+    
     //@Binding var root: Node
     
     @State var avgPosition: CGFloat? = nil
@@ -30,9 +34,9 @@ struct TreeView: View {
                 
             
             //Text("\(avgPosition ?? 0)").font(.system(size: 8))
-            if(store[id].children != nil){
+            if(node?.children != nil){
                 HStack(alignment: .top, spacing: 10) {
-                    ForEach(store[id].children!) { node in
+                    ForEach(node!.children!) { node in
                         //DraggableView() {
                             TreeView(id: node.id)
                         //}
@@ -43,16 +47,16 @@ struct TreeView: View {
         .backgroundPreferenceValue(NodePositionsPreferenceKey.self) { preference -> GeometryReader<AnyView> in
             GeometryReader { geometry -> AnyView in
                 
-                if(store[id].children != nil){
+                if(node?.children != nil){
                     
                     DispatchQueue.main.async {
                         var sum: CGFloat = 0
                         
-                        store[id].children!.forEach({ child in
+                        node!.children!.forEach({ child in
                             sum += geometry[preference[child.id]!.top!].x
                         })
                         
-                        self.avgPosition = sum/CGFloat(store[id].children!.count)
+                        self.avgPosition = sum/CGFloat(node!.children!.count)
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -65,8 +69,8 @@ struct TreeView: View {
         }
         .backgroundPreferenceValue(NodePositionsPreferenceKey.self) { preference in
             GeometryReader { geometry in
-                if(store[id].children != nil){
-                    ForEach(store[id].children!, id: \.id, content: { child in
+                if(node?.children != nil && preference[id] != nil){
+                    ForEach(node!.children!, id: \.id, content: { child in
                         Line(
                             from: geometry[preference[id]!.bottom!],
                             to: geometry[preference[child.id]!.top!]

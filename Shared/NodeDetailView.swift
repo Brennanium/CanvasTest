@@ -10,6 +10,10 @@ import SwiftUI
 struct NodeDetailView: View {
     var id: UUID
     
+    var node: Node? {
+        get { store.nodeByID(id) }
+    }
+    
     @State var text = ""
     
     @EnvironmentObject var store: ObservedVariables
@@ -17,14 +21,14 @@ struct NodeDetailView: View {
     var body: some View {
         VStack(alignment: .center) {
             HStack {
-                textField(text: $store[id].text)
+                textField(text: node != nil ? $store[id].text : $text)
             }
             
-            if store[id].children != nil {
+            if node?.children != nil {
                 Group {
                     Text("children:")
                     HStack {
-                        ForEach(store[id].children!) { node in
+                        ForEach(node!.children!) { node in
                             textField(text: $store[node.id].text)
                         }
                     }

@@ -10,19 +10,23 @@ import SwiftUI
 struct NodeView: View {
     var id: UUID
     
+    var node: Node? {
+        get { store.nodeByID(id) }
+    }
+    
     @EnvironmentObject var store: ObservedVariables
     
     var body: some View {
         let tap = TapGesture()
             .onEnded() { _ in
-                //withAnimation(.default) {
+                withAnimation(.default) {
                     //self.root.insert("new!", forID: self.node.id)
                     if self.store.selected != self.id {
                         self.store.selected = self.id
                     } //else {
                         //self.store.selected = nil
                     //}
-                //}
+                }
             }
         let doubleTap = TapGesture(count: 2)
             .onEnded() { _ in
@@ -51,19 +55,19 @@ struct NodeView: View {
     var innerNode: some View {
         if store.selected == id {
             return AnyView(//NavigationLink(destination: NodeDetailView(id: id).environmentObject(store)) {
-                Text(store[id].text)
+                Text(node?.text ?? "")
             //TextField("XP", text: $store[id].text)
                     .font(.system(size: 16))
                     .fixedSize()
                     .padding(2)
                     .background(RoundedRectangle(cornerRadius: 4).stroke().foregroundColor(.blue))
-                    /*.contextMenu() {
+                    .contextMenu() {
                         Button(action: {
                             store.delete(id: id)
                         }) {
                             Label("Delete", systemImage: "trash")
                         }
-                    }*/
+                    }
             )
         } else {
             /*let tap = TapGesture()
@@ -84,7 +88,7 @@ struct NodeView: View {
             let simultaneous = tap.simultaneously(with: doubleTap)
         
             */
-            return AnyView(Text(store[id].text)
+            return AnyView(Text(node?.text ?? "")
                 .font(.system(size: 16))
                 .fixedSize()
                 .padding(2)

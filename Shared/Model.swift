@@ -39,7 +39,7 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             VStack {
-                /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+                Text("Hello, World!")
                     .navigationBarItems(trailing:
                         NavigationLink(destination:
                             store.selected != nil ?
@@ -51,6 +51,8 @@ struct MainView: View {
                             Image(systemName: "info.circle")
                         }.disabled(store.selected == nil)
                     )
+                Text("parent: \(store.selected != nil ? (store.parent(ofID: store.selected!) != nil ? store.parent(ofID: store.selected!)!.text : "") : "")")
+                Text("child: \(store.selected != nil ? store.nodeByID(store.selected!)?.text ?? "" : "")")
                 Slider(value: $store.horizontalPadding, in: 0...15).padding()
                 RootView(store: store)
 
@@ -73,6 +75,10 @@ class ObservedVariables: ObservableObject {
     @Published var nodes: [UUID:Node] = [:]
     @Published var root: UUID?
     
+    var rootNode: Node? {
+        get { root != nil ? nodes[root!] : nil }
+    }
+    
     subscript(id: UUID) -> Node {
         get {
             nodes[id]!
@@ -82,6 +88,13 @@ class ObservedVariables: ObservableObject {
         }
     }
     
+    func nodeByID(_ id: UUID) -> Node? {
+        return nodes[id]
+    }
+    
+    func isValidID(_ id: UUID) -> Bool {
+        return nodeByID(id) != nil
+    }
     
     func insert(_ node: Node, forID id: UUID) -> UUID {
         nodes.merge([node.id:node], uniquingKeysWith: { $1 })
@@ -96,9 +109,11 @@ class ObservedVariables: ObservableObject {
     }
     
     func delete(id: UUID) {
-        guard let parentID = nodes.first(where: { key, value in
-            value.children != nil && value.children!.contains(where: { $0.id == id })
-        })?.key else {
+        func node() -> Node? {
+            self.nodeByID(id)
+        }
+        
+        guard let parentID = findParentID(forID: id) else {
             dealWithNodeIfNoParent(forID: id)
             nodes.removeValue(forKey: id)
             return
@@ -106,11 +121,12 @@ class ObservedVariables: ObservableObject {
         
         self[parentID].children!.removeAll(where: { $0.id == id })
         
-        if self[id].children != nil {
+        
+        if node()?.children != nil {
             if self[parentID].children != nil {
-                self[parentID].children!.append(contentsOf: self[id].children!)
+                self[parentID].children!.append(contentsOf: node()!.children!)
             } else {
-                self[parentID].children = self[id].children!
+                self[parentID].children = node()!.children!
             }
         }
         
@@ -118,21 +134,37 @@ class ObservedVariables: ObservableObject {
         
     }
     
+    private func findParentID(forID id: UUID) -> UUID? {
+        return nodes.first(where: { key, value in
+            value.children != nil && value.children!.contains(where: { $0.id == id })
+        })?.key
+    }
+    
+    func parent(ofID id: UUID) -> Node? {
+        let parentID = findParentID(forID: id)
+        
+        return parentID != nil ? nodes[parentID!] : nil
+    }
+    
     private func dealWithNodeIfNoParent(forID id: UUID) {
-        if self[id].children == nil {
+        func node() -> Node? {
+            self.nodeByID(id)
+        }
+        
+        guard node()?.children != nil else {
             initTree()
             return
         }
-        root = self[id].children!.first!.id
+        root = node()!.children!.first!.id
         
-        self[id].children!.remove(at: 0)
+        node()?.children!.remove(at: 0)
         
-        if self[id].children != nil && self[id].children!.count != 0 {
+        if node()?.children != nil && node()!.children!.count != 0 {
             //move children of deleting node to new root
-            if self[root!].children != nil {
-                self[root!].children!.append(contentsOf: self[id].children!)
+            if rootNode!.children != nil {
+                rootNode!.children!.append(contentsOf: node()!.children!)
             } else {
-                self[root!].children = self[id].children!
+                rootNode!.children = node()!.children!
             }
             
         }
